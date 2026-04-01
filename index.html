@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VIGIL AI</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: linear-gradient(135deg,#0f0f0f,#1a1a2e);
+    color: white;
+    text-align: center;
+}
+
+.nav {
+    background:#111;
+    padding:10px;
+}
+.nav a {
+    color:white;
+    margin:10px;
+    text-decoration:none;
+}
+
+.container {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:30px;
+    flex-wrap:wrap;
+}
+
+.card {
+    background:#16213e;
+    padding:20px;
+    border-radius:15px;
+    width:260px;
+    box-shadow:0 0 20px rgba(255,0,0,0.3);
+}
+
+button {
+    background:#ff4b5c;
+    border:none;
+    padding:10px;
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+select {
+    width:90%;
+    padding:8px;
+    margin:5px;
+}
+
+#result { font-size:22px; }
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="/">🏠 Dashboard</a>
+    <a href="/monitor">📡 Monitor</a>
+    <a href="/emergency">🚨 Emergency</a>
+</div>
+
+<h1>🚨 VIGIL AI</h1>
+
+<div class="container">
+
+<div class="card">
+<h3>📍 Location</h3>
+<button onclick="getLocation()">Get Location</button>
+<p id="location">---</p>
+</div>
+
+<div class="card">
+<h3>⚙️ Inputs</h3>
+
+<select id="time"><option>day</option><option>night</option></select>
+<select id="area"><option>crowded</option><option>isolated</option></select>
+<select id="movement"><option>walking</option><option>running</option></select>
+<select id="light"><option>bright</option><option>dark</option></select>
+
+<button onclick="predict()">Analyze</button>
+</div>
+
+<div class="card">
+<h3>🧠 AI Result</h3>
+<p id="result">---</p>
+<p id="suggestion"></p>
+</div>
+
+</div>
+
+<script>
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(pos=>{
+        document.getElementById("location").innerText =
+        pos.coords.latitude.toFixed(4)+", "+pos.coords.longitude.toFixed(4);
+    });
+}
+
+function predict() {
+    fetch("/predict",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            time:time.value,
+            area:area.value,
+            movement:movement.value,
+            light:light.value
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        result.innerText="Risk: "+data.risk.toUpperCase();
+        suggestion.innerText=data.suggestion;
+    });
+}
+</script>
+
+</body>
+</html>
