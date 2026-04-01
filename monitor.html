@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Monitor</title>
+
+<style>
+body {
+    background:black;
+    color:white;
+    text-align:center;
+}
+
+.nav {
+    background:#111;
+    padding:10px;
+}
+.nav a {
+    color:white;
+    margin:10px;
+    text-decoration:none;
+}
+
+.scan {
+    margin-top:50px;
+    font-size:26px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity:0.3; }
+}
+
+.safe { color:lime; }
+.medium { color:orange; }
+.high { color:red; }
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="/">🏠 Dashboard</a>
+    <a href="/monitor">📡 Monitor</a>
+    <a href="/emergency">🚨 Emergency</a>
+</div>
+
+<h1>📡 LIVE MONITORING</h1>
+
+<p class="scan">🔍 AI Scanning...</p>
+<h2 id="status"></h2>
+
+<script>
+setInterval(()=>{
+    fetch("/live_risk")
+    .then(res=>res.json())
+    .then(data=>{
+        let s=document.getElementById("status");
+        s.innerText="Risk: "+data.risk.toUpperCase();
+        s.className=data.risk;
+    });
+},2000);
+</script>
+
+</body>
+</html>
